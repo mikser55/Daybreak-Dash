@@ -1,5 +1,4 @@
-﻿using UnityEditor.U2D;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMover : MonoBehaviour
@@ -38,6 +37,6 @@ public class PlayerMover : MonoBehaviour
     private void Move()
     {
         _move = new Vector3(_moveDirection.x * _speed, 0f, _moveDirection.z * _speed);
-        _rigidbody.velocity = _move * _speed * Time.fixedDeltaTime;
+        _rigidbody.velocity = _speed * Time.fixedDeltaTime * _move;
     }
 }

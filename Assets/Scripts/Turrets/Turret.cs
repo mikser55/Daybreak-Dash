@@ -21,12 +21,12 @@ public abstract class Turret : MonoBehaviour
             health.Died += RemoveEnemy;
     }
 
-    protected void RemoveEnemy(Enemy enemy)
+    protected void RemoveEnemy(Health enemyHealth)
     {
-        if (enemy.TryGetComponent(out Health health))
-            health.Died -= RemoveEnemy;
+        enemyHealth.Died -= RemoveEnemy;
 
-        Enemies.Remove(enemy);
+        if (enemyHealth.TryGetComponent(out Enemy enemy))
+            Enemies.Remove(enemy);
     }
 
     protected void FindNearestEnemy()

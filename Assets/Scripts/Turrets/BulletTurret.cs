@@ -17,19 +17,19 @@ public class BulletTurret : Turret
         _currentAmmo = _maxAmmo;
     }
 
-    private void OnEnable()
-    {
-        Scanner.EnemyEntered += AddNewEnemy;
-        Scanner.EnemyExited += RemoveEnemy;
-        Scanner.StartingShoot += StartShoot;
-    }
+    //private void OnEnable()
+    //{
+    //    Scanner.EnemyEntered += AddNewEnemy;
+    //    Scanner.EnemyExited += RemoveEnemy;
+    //    Scanner.StartingShoot += StartShoot;
+    //}
 
-    private void OnDisable()
-    {
-        Scanner.EnemyEntered -= AddNewEnemy;
-        Scanner.EnemyExited -= RemoveEnemy;
-        Scanner.StartingShoot -= StartShoot;
-    }
+    //private void OnDisable()
+    //{
+    //    Scanner.EnemyEntered -= AddNewEnemy;
+    //    Scanner.EnemyExited -= RemoveEnemy;
+    //    Scanner.StartingShoot -= StartShoot;
+    //}
 
     public override void StartShoot()
     {

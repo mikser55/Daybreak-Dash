@@ -16,13 +16,11 @@ public class ResourceManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _scrapMine.ResourceCollected += AddScrap;
         _energyMine.ResourceCollected += AddEnergy;
     }
 
     private void OnDisable()
     {
-        _scrapMine.ResourceCollected -= AddScrap;
         _energyMine.ResourceCollected -= AddEnergy;
         
     }
