@@ -3,18 +3,18 @@ using UnityEngine;
 
 public class Scanner : MonoBehaviour
 {
-    public event Action<Resource> ResourceFound;
-    public event Action<Resource> ResourceLost;
+    public event Action<ScrapMine> ResourceFound;
+    public event Action<ScrapMine> ResourceLost;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Resource resource))
+        if (other.TryGetComponent(out ScrapMine resource))
             ResourceFound?.Invoke(resource);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent(out Resource resource))
+        if (other.TryGetComponent(out ScrapMine resource))
             ResourceLost?.Invoke(resource);
     }
 }

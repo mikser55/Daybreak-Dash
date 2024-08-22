@@ -28,11 +28,14 @@ public class CircleFillController : MonoBehaviour
 
     private void Start()
     {
-        UpdateCircle();
+        _circleMaterial.SetFloat(FillAmount, 0);
     }
 
     private void UpdateCircle()
     {
-        _circleMaterial.SetFloat(FillAmount, (_player.CurrentExperience * 100) / _player.ExperienceToNextLevel);
+        _circleMaterial.SetFloat(FillAmount, (float)_player.CurrentExperience / _player.ExperienceToNextLevel);
+
+        if (_player.CurrentExperience == _player.ExperienceToNextLevel)
+            _circleMaterial.SetFloat(FillAmount, 0);
     }
 }

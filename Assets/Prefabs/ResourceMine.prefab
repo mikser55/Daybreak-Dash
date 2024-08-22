@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 444617239391596707}
   - component: {fileID: 7275649018391480464}
   - component: {fileID: 2998724775862765491}
-  - component: {fileID: 1353785315088410131}
   - component: {fileID: -7633381820315857236}
   m_Layer: 0
   m_Name: ResourceMine
@@ -149,18 +148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxHealth: 3
---- !u!114 &1353785315088410131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 546309077260013564}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d039b7c67deccaa4696f05b2c551a39f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-7633381820315857236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,4 +160,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de188fb07eb51b1429c905faf19a19f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scrapFall: {fileID: 0}
+  _experienceValue: 5

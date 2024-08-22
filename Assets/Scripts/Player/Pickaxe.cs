@@ -7,7 +7,7 @@ public class Pickaxe : MonoBehaviour
 {
     [SerializeField] private Scanner _scanner;
 
-    private readonly List<Resource> _resources = new();
+    private readonly List<ScrapMine> _resources = new();
     private readonly float _mineDistance = 0.2f;
     private readonly float _mineDelay = 1f;
     private readonly float _mineAmount = 1f;
@@ -32,25 +32,31 @@ public class Pickaxe : MonoBehaviour
         wait = new(_mineDelay);
     }
 
-    private void AddResource(Resource resource)
+    private void AddResource(ScrapMine resource)
     {
         if (!_resources.Contains(resource))
+        {
             _resources.Add(resource);
+            resource.Destroyed += DeleteResource;
+        }
 
         _mineCoroutine ??= StartCoroutine(MineResources());
     }
 
-    private void DeleteResource(Resource resource)
+    private void DeleteResource(ScrapMine resource)
     {
         if (_resources.Contains(resource))
+        {
             _resources.Remove(resource);
+            resource.Destroyed -= DeleteResource;
+        }
     }
 
     private IEnumerator MineResources()
     {
         while (_resources.Count > 0)
         {
-            Resource nearestResource = FindNearestResource();
+            ScrapMine nearestResource = FindNearestResource();
 
             if (nearestResource != null && nearestResource.TryGetComponent(out Health health))
             {
@@ -66,10 +72,10 @@ public class Pickaxe : MonoBehaviour
         _mineCoroutine = null;
     }
 
-    private Resource FindNearestResource()
+    private ScrapMine FindNearestResource()
     {
         float sqrMineDistance = _mineDistance * _mineDistance;
-        Resource nearestResource;
+        ScrapMine nearestResource;
 
         if (_resources.Count > 0)
         {

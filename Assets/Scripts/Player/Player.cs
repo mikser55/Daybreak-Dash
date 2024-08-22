@@ -17,7 +17,6 @@ public class Player : MonoBehaviour
     public void Start()
     {
         ExperienceToNextLevel = CalculateExperienceForNextLevel(CurrentLevel);
-        AddExperience(5);
     }
 
     public void AddExperience(int amount)

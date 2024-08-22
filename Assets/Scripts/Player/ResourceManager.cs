@@ -3,8 +3,7 @@ using System;
 
 public class ResourceManager : MonoBehaviour
 {
-    [SerializeField] ScrapMine _scrapMine;
-    [SerializeField] EnergyMine _energyMine;
+    //[SerializeField] EnergyMine _energyMine;
     [SerializeField] private int _maxEnergyValue = 10;
     [SerializeField] private int _maxScrapValue = 100;
 
@@ -14,16 +13,16 @@ public class ResourceManager : MonoBehaviour
     public event Action<int> ScrapAmountChanged;
     public event Action<int> EnergyAmountChanged;
 
-    private void OnEnable()
-    {
-        _energyMine.ResourceCollected += AddEnergy;
-    }
+    //private void OnEnable()
+    //{
+    //    _energyMine.ResourceCollected += AddEnergy;
+    //}
 
-    private void OnDisable()
-    {
-        _energyMine.ResourceCollected -= AddEnergy;
+    //private void OnDisable()
+    //{
+    //    _energyMine.ResourceCollected -= AddEnergy;
         
-    }
+    //}
 
     private void AddScrap()
     {
