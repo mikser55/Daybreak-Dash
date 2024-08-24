@@ -6,14 +6,14 @@ using UnityEngine;
 public class Pickaxe : MonoBehaviour
 {
     [SerializeField] private Scanner _scanner;
+    [SerializeField] private float _mineSpeed = 1f;
 
+    private readonly float _minMineDelay = 1f;
+    private readonly float _maxMineDelay = 2f;
     private readonly List<ScrapMine> _resources = new();
     private readonly float _mineDistance = 0.2f;
-    private readonly float _mineDelay = 1f;
     private readonly float _mineAmount = 1f;
-
     private Coroutine _mineCoroutine;
-    private WaitForSeconds wait;
 
     private void OnEnable()
     {
@@ -27,9 +27,13 @@ public class Pickaxe : MonoBehaviour
         _scanner.ResourceLost -= DeleteResource;
     }
 
-    private void Start()
+    public void IncreaseMineSpeed(float value)
     {
-        wait = new(_mineDelay);
+        if (value > 0)
+        {
+            _mineSpeed += value;
+            _mineSpeed = Mathf.Clamp(_mineSpeed, _minMineDelay, _maxMineDelay);
+        }
     }
 
     private void AddResource(ScrapMine resource)
@@ -54,6 +58,9 @@ public class Pickaxe : MonoBehaviour
 
     private IEnumerator MineResources()
     {
+        float mineDelay = 1/_mineSpeed;
+        WaitForSeconds wait = new(mineDelay);
+
         while (_resources.Count > 0)
         {
             ScrapMine nearestResource = FindNearestResource();

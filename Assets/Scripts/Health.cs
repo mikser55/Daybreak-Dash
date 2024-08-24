@@ -15,6 +15,16 @@ public class Health : MonoBehaviour
         CurrentHealth = _maxHealth;
     }
 
+    public void IncreaseMaxHealth(float value)
+    {
+        if (value > 0)
+        {
+            _maxHealth += value;
+            CurrentHealth += value;
+            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, _maxHealth);
+        }
+    }
+
     public void TakeDamage(float damage)
     {
         if (damage > 0)

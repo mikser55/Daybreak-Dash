@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceSpawner : MonoBehaviour
+public class ScrapMineSpawner : MonoBehaviour
 {
+    [SerializeField] private ScrapSpawner _scrapSpawner;
     [SerializeField] private Player _player;
     [SerializeField] private ScrapMine _prefab;
     [SerializeField] private int _numberOfResources = 10;
@@ -32,7 +33,7 @@ public class ResourceSpawner : MonoBehaviour
             if (spawnPosition != Vector3.zero)
             {
                 ScrapMine scrapMine = Instantiate(_prefab, spawnPosition, Quaternion.identity);
-                scrapMine.Initialize(_player);
+                scrapMine.Initialize(_player, _scrapSpawner);
                 _spawnedPositions.Add(spawnPosition);
             }
         }

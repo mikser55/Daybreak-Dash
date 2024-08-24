@@ -1,8 +1,10 @@
 ﻿using System;
+using UniRx;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private const string LevelUp = nameof(LevelUp);
     private const int FirstLevelExp = 100;
 
     [SerializeField] private float _levelMultiplier = 1.2f;
@@ -24,23 +26,24 @@ public class Player : MonoBehaviour
         if (amount > 0)
         {
             CurrentExperience += amount;
-            ExperienceChanged?.Invoke();
 
             if (CurrentExperience >= ExperienceToNextLevel)
-            {
-                LevelUp();
-            }
+                IncreaseLevel();
+
+            ExperienceChanged?.Invoke();
         }
     }
 
-    private void LevelUp()
+    private void IncreaseLevel()
     {
         CurrentExperience -= ExperienceToNextLevel;
         CurrentLevel++;
+        MessageBroker.Default.Publish(new PauseSource(LevelUp));
+        MessageBroker.Default.Publish(new LevelUpSource());
         ExperienceToNextLevel = CalculateExperienceForNextLevel(CurrentLevel);
 
         if (CurrentExperience >= ExperienceToNextLevel)
-            LevelUp();
+            IncreaseLevel();
     }
 
     private int CalculateExperienceForNextLevel(int level)

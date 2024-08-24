@@ -6,6 +6,7 @@ public class ScrapMine : MonoBehaviour
 {
     [SerializeField] private int _experienceValue = 10;
 
+    private ScrapSpawner _spawner;
     private Player _player;
     private Health _health;
 
@@ -27,14 +28,15 @@ public class ScrapMine : MonoBehaviour
         _health.Damaged -= GiveExperience;
     }
 
-    public void Initialize(Player player)
+    public void Initialize(Player player, ScrapSpawner spawner)
     {
         _player = player;
+        _spawner = spawner;
     }
 
     private void DropScrap()
     {
-
+        _spawner.SpawnScrap(transform.position);
     } 
 
     private void GiveExperience()

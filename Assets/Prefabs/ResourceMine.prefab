@@ -160,4 +160,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de188fb07eb51b1429c905faf19a19f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _experienceValue: 5
+  _experienceValue: 3

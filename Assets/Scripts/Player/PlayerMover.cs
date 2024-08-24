@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMover : MonoBehaviour
 {
-    [SerializeField] private float _speed;
+    private readonly float _minSpeed = 20f;
+    private readonly float _maxSpeed = 25f;
+    private float _currentSpeed;
 
     private Rigidbody _rigidbody;
     private Vector3 _moveDirection;
@@ -12,6 +15,7 @@ public class PlayerMover : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _currentSpeed = _minSpeed;
     }
 
     private void OnEnable()
@@ -34,9 +38,18 @@ public class PlayerMover : MonoBehaviour
         Move();
     }
 
+    public void IncreaseMovespeed(float value)
+    {
+        if (value > 0)
+        {
+            _currentSpeed += value;
+            _currentSpeed = Mathf.Clamp(_currentSpeed, _minSpeed, _maxSpeed);
+        }
+    }
+
     private void Move()
     {
-        _move = new Vector3(_moveDirection.x * _speed, 0f, _moveDirection.z * _speed);
-        _rigidbody.velocity = _speed * Time.fixedDeltaTime * _move;
+        _move = new Vector3(_moveDirection.x * _currentSpeed, 0f, _moveDirection.z * _currentSpeed);
+        _rigidbody.velocity = _currentSpeed * Time.fixedDeltaTime * _move;
     }
 }
