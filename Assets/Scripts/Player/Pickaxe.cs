@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class Pickaxe : MonoBehaviour
 {
+    private readonly float MinMineDelay = 1f;
+    private readonly float MaxMineDelay = 2f;
+
     [SerializeField] private Scanner _scanner;
     [SerializeField] private float _mineSpeed = 1f;
 
-    private readonly float _minMineDelay = 1f;
-    private readonly float _maxMineDelay = 2f;
     private readonly List<ScrapMine> _resources = new();
-    private readonly float _mineDistance = 0.2f;
-    private readonly float _mineAmount = 1f;
+    private readonly float _mineDamage = 1f;
     private Coroutine _mineCoroutine;
 
     private void OnEnable()
@@ -32,7 +32,7 @@ public class Pickaxe : MonoBehaviour
         if (value > 0)
         {
             _mineSpeed += value;
-            _mineSpeed = Mathf.Clamp(_mineSpeed, _minMineDelay, _maxMineDelay);
+            _mineSpeed = Mathf.Clamp(_mineSpeed, MinMineDelay, MaxMineDelay);
         }
     }
 
@@ -58,7 +58,7 @@ public class Pickaxe : MonoBehaviour
 
     private IEnumerator MineResources()
     {
-        float mineDelay = 1/_mineSpeed;
+        float mineDelay = 1 / _mineSpeed;
         WaitForSeconds wait = new(mineDelay);
 
         while (_resources.Count > 0)
@@ -67,7 +67,7 @@ public class Pickaxe : MonoBehaviour
 
             if (nearestResource != null && nearestResource.TryGetComponent(out Health health))
             {
-                health.TakeDamage(_mineAmount);
+                health.TakeDamage(_mineDamage);
 
                 if (health.CurrentHealth == 0)
                     DeleteResource(nearestResource);
@@ -81,19 +81,12 @@ public class Pickaxe : MonoBehaviour
 
     private ScrapMine FindNearestResource()
     {
-        float sqrMineDistance = _mineDistance * _mineDistance;
         ScrapMine nearestResource;
 
         if (_resources.Count > 0)
-        {
-            nearestResource = _resources
-                .OrderBy(resource => (resource.transform.position - transform.position).magnitude)
-                .FirstOrDefault();
-        }
+            nearestResource = _resources.OrderBy(resource => (resource.transform.position - transform.position).magnitude).FirstOrDefault();
         else
-        {
             nearestResource = null;
-        }
 
         return nearestResource;
     }

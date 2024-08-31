@@ -10,45 +10,41 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
     {
         [Tooltip("The GameObject that the agent is seeking")]
         [UnityEngine.Serialization.FormerlySerializedAs("target")]
-        public SharedGameObject m_Target;
+        [SerializeField] private SharedGameObject _target;
         [Tooltip("If target is null then use the target position")]
         [UnityEngine.Serialization.FormerlySerializedAs("targetPosition")]
-        public SharedVector3 m_TargetPosition;
+        [SerializeField] private SharedVector3 _targetPosition;
 
         public override void OnStart()
         {
             base.OnStart();
-
-            SetDestination(Target());
+            SetDestination(GetTargetPosition());
         }
 
-        // Seek the destination. Return success once the agent has reached the destination.
-        // Return running if the agent hasn't reached the destination yet
         public override TaskStatus OnUpdate()
         {
             if (HasArrived()) {
                 return TaskStatus.Success;
             }
 
-            SetDestination(Target());
+            SetDestination(GetTargetPosition());
 
             return TaskStatus.Running;
         }
         
-        // Return targetPosition if target is null
-        private Vector3 Target()
+        private Vector3 GetTargetPosition()
         {
-            if (m_Target.Value != null) {
-                return m_Target.Value.transform.position;
+            if (_target.Value != null) {
+                return _target.Value.transform.position;
             }
-            return m_TargetPosition.Value;
+            return _targetPosition.Value;
         }
 
         public override void OnReset()
         {
             base.OnReset();
-            m_Target = null;
-            m_TargetPosition = Vector3.zero;
+            _target = null;
+            _targetPosition = Vector3.zero;
         }
     }
 }

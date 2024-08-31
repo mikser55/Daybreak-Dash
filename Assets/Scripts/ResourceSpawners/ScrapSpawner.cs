@@ -19,7 +19,7 @@ public class ScrapSpawner : MonoBehaviour
 
     public Scrap SpawnScrap(Vector3 spawnPosition)
     {
-        Scrap scrap = _pool.GetScrap();
+        Scrap scrap = _pool.GetObject();
         scrap.transform.position = spawnPosition;
 
         if (scrap.TryGetComponent(out Rigidbody rigidbody))
@@ -36,6 +36,6 @@ public class ScrapSpawner : MonoBehaviour
 
     private void ReturnScrap(Scrap scrap)
     {
-        _pool.ReturnScrap(scrap);
+        _pool.ReturnObject(scrap);
     }
 }

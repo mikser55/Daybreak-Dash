@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ScrapCollector : MonoBehaviour
 {
-    private const int Delay = 1;
     private const int MaxColliders = 10;
     private const float MinDistanceToCollect = 0.8f;
 
+    [SerializeField] private float _delay = 0.5f;
     [SerializeField] private float _scrapSpeed = 30f;
     [SerializeField] private float _radius;
     [SerializeField] LayerMask _scrapMask;
@@ -21,7 +20,7 @@ public class ScrapCollector : MonoBehaviour
     private void Start()
     {
         
-        _wait = new WaitForSeconds(Delay);
+        _wait = new WaitForSeconds(_delay);
         _colliders = new Collider[MaxColliders];
         StartCoroutine(FindCoroutine());
     }
@@ -59,6 +58,8 @@ public class ScrapCollector : MonoBehaviour
     {
         if (scrap.TryGetComponent(out Transform scrapTransform))
         {
+            yield return new WaitForSeconds(0.5f);
+
             while ((transform.position - scrapTransform.position).sqrMagnitude > MinDistanceToCollect * MinDistanceToCollect)
             {
                 scrapTransform.position = Vector3.MoveTowards(scrapTransform.position, transform.position, _scrapSpeed * Time.deltaTime);

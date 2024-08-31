@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class TurretScanner : MonoBehaviour
 {
-    public event Action StartingShoot;
     public event Action<Enemy> EnemyEntered;
     public event Action<Enemy> EnemyExited;
 
@@ -12,7 +11,6 @@ public class TurretScanner : MonoBehaviour
         if (other.gameObject.TryGetComponent(out Enemy enemy))
         {
             EnemyEntered?.Invoke(enemy);
-            StartingShoot?.Invoke();
         }
     }
 

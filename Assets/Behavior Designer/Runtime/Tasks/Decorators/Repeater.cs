@@ -1,47 +1,95 @@
-namespace BehaviorDesigner.Runtime.Tasks
+using BehaviorDesigner.Runtime;
+using BehaviorDesigner.Runtime.Tasks;
+
+[TaskDescription("Repeats the child task until the child task returns success or failure based on the end conditions. " +
+                 "The conditional abort can be used to abort the repeater early.")]
+[TaskIcon("{SkinColor}RepeatIcon.png")]
+public class Repeater : Decorator
 {
-    [TaskDescription(@"The repeater task will repeat execution of its child task until the child task has been run a specified number of times. " +
-                      "It has the option of continuing to execute the child task even if the child task returns a failure.")]
-    [TaskIcon("{SkinColor}RepeaterIcon.png")]
-    public class Repeater : Decorator
+    public enum AbortType
     {
-        [Tooltip("The number of times to repeat the execution of its child task")]
-        public SharedInt count = 1;
-        [Tooltip("Allows the repeater to repeat forever")]
-        public SharedBool repeatForever;
-        [Tooltip("Should the task return if the child task returns a failure")]
-        public SharedBool endOnFailure;
+        None,
+        Self,
+        LowerPriority,
+        Both
+    }
 
-        // The number of times the child task has been run.
-        private int executionCount = 0;
-        // The status of the child after it has finished running.
-        private TaskStatus executionStatus = TaskStatus.Inactive;
+    [Tooltip("The number of times to repeat the child task. Set to -1 to repeat forever")]
+    public SharedInt count = -1;
+    [Tooltip("Should the repeater end after the first failure?")]
+    public SharedBool endOnFailure;
+    [Tooltip("Should the repeater end after the first success?")]
+    public SharedBool endOnSuccess;
+    [Tooltip("Should the repeater reset the child after each iteration?")]
+    public SharedBool resetChild;
+    [Tooltip("Condition to end the repeater")]
+    public SharedBool endCondition;
+    [Tooltip("The type of conditional abort")]
+    public AbortType abortType = AbortType.None;
 
-        public override bool CanExecute()
+    // The number of times the child task has been run.
+    private int executionCount;
+    // The status of the child after it has finished running.
+    private TaskStatus executionStatus = TaskStatus.Inactive;
+
+    public override bool CanExecute()
+    {
+        // Continue executing until we've reached the count or the child task returns failure.
+        return (count.Value == -1 || executionCount < count.Value) &&
+               (!endOnFailure.Value || (endOnFailure.Value && executionStatus != TaskStatus.Failure)) &&
+               (!endOnSuccess.Value || (endOnSuccess.Value && executionStatus != TaskStatus.Success)) &&
+               (endCondition == null || endCondition.Value);
+    }
+
+    public override bool CanRunParallelChildren()
+    {
+        return abortType == AbortType.LowerPriority || abortType == AbortType.Both;
+    }
+
+    public override void OnChildExecuted(TaskStatus childStatus)
+    {
+        // Update the execution status after the child has finished running.
+        executionStatus = childStatus;
+        if ((childStatus == TaskStatus.Success && endOnSuccess.Value) || (childStatus == TaskStatus.Failure && endOnFailure.Value))
         {
-            // Continue executing until we've reached the count or the child task returned failure and we should stop on a failure.
-            return (repeatForever.Value || executionCount < count.Value) && (!endOnFailure.Value || (endOnFailure.Value && executionStatus != TaskStatus.Failure));
+            executionCount = count.Value;
         }
-
-        public override void OnChildExecuted(TaskStatus childStatus)
+        else
         {
-            // The child task has finished execution. Increase the execution count and update the execution status.
             executionCount++;
-            executionStatus = childStatus;
         }
+    }
 
-        public override void OnEnd()
-        {
-            // Reset the variables back to their starting values.
-            executionCount = 0;
-            executionStatus = TaskStatus.Inactive;
-        }
+    public override void OnEnd()
+    {
+        // Reset the variables back to their starting values.
+        executionCount = 0;
+        executionStatus = TaskStatus.Inactive;
+    }
 
-        public override void OnReset()
+    public override void OnReset()
+    {
+        // Reset the public properties back to their original values.
+        count = -1;
+        endOnFailure = false;
+        endOnSuccess = false;
+        resetChild = false;
+        endCondition = null;
+        abortType = AbortType.None;
+    }
+
+    public override TaskStatus OnUpdate()
+    {
+        if (HasLowerPriorityAbort())
         {
-            // Reset the public properties back to their original values.
-            count = 0;
-            endOnFailure = true;
+            return TaskStatus.Running;
         }
+        return base.OnUpdate();
+    }
+
+    private bool HasLowerPriorityAbort()
+    {
+        return (abortType == AbortType.LowerPriority || abortType == AbortType.Both) &&
+               (endCondition == null || endCondition.Value);
     }
 }

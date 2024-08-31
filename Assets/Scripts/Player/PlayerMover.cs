@@ -4,10 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMover : MonoBehaviour
 {
+    [SerializeField] private float _currentSpeed;
+
     private readonly float _minSpeed = 20f;
     private readonly float _maxSpeed = 25f;
-    private float _currentSpeed;
-
     private Rigidbody _rigidbody;
     private Vector3 _moveDirection;
     private Vector3 _move;

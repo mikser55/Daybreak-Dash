@@ -12,6 +12,7 @@ namespace BehaviorDesigner.Runtime.Tasks
         public Conditional conditionalTask;
         [Tooltip("Should the inspected conditional task be labeled within the graph?")]
         public bool graphLabel;
+        public SharedBool _isPlayerInSight;
 
         // The status of the child after it has finished running.
         private TaskStatus executionStatus = TaskStatus.Inactive;

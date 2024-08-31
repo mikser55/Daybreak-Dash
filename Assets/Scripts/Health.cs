@@ -5,12 +5,14 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float _maxHealth = 100;
 
-    public event Action<Health> Died;
+    public event Action<Health> ObjectDied;
+    public event Action EnemyDied;
+    public event Action<Enemy> EnemyComponentDied;
     public event Action Damaged;
 
     public float CurrentHealth { get; private set; }
 
-    private void Start()
+    private void OnEnable()
     {
         CurrentHealth = _maxHealth;
     }
@@ -39,9 +41,10 @@ public class Health : MonoBehaviour
 
     private void Die()
     {
-        Destroy(gameObject);
+        ObjectDied?.Invoke(this);
+        EnemyDied?.Invoke();
 
-        if (TryGetComponent(out Enemy _))
-            Died?.Invoke(this);
+        if (TryGetComponent(out Enemy enemy))
+            EnemyComponentDied(enemy);
     }
 }

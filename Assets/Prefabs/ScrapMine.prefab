@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2998724775862765491}
   - component: {fileID: -7633381820315857236}
   m_Layer: 0
-  m_Name: ResourceMine
+  m_Name: ScrapMine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

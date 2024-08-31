@@ -5,7 +5,7 @@ public class ScrapMineSpawner : MonoBehaviour
 {
     [SerializeField] private ScrapSpawner _scrapSpawner;
     [SerializeField] private Player _player;
-    [SerializeField] private ScrapMine _prefab;
+    [SerializeField] private ScrapMinePool _pool;
     [SerializeField] private int _numberOfResources = 10;
     [SerializeField] private float _spawnRadius = 50f;
     [SerializeField] private float _minDistanceBetweenResources = 5f;
@@ -24,6 +24,15 @@ public class ScrapMineSpawner : MonoBehaviour
         SpawnResources();
     }
 
+    public void ReturnScrapMine(Health health)
+    {
+        if (health.TryGetComponent(out ScrapMine scrapMine))
+        {
+            _pool.ReturnObject(scrapMine);
+            health.ObjectDied -= ReturnScrapMine;
+        }
+    }
+
     private void SpawnResources()
     {
         for (int i = 0; i < _numberOfResources; i++)
@@ -32,9 +41,13 @@ public class ScrapMineSpawner : MonoBehaviour
 
             if (spawnPosition != Vector3.zero)
             {
-                ScrapMine scrapMine = Instantiate(_prefab, spawnPosition, Quaternion.identity);
+                ScrapMine scrapMine = _pool.GetObject();
+                scrapMine.transform.position = spawnPosition;
                 scrapMine.Initialize(_player, _scrapSpawner);
                 _spawnedPositions.Add(spawnPosition);
+
+                if (scrapMine.TryGetComponent(out Health health))
+                    health.ObjectDied += ReturnScrapMine;
             }
         }
     }
