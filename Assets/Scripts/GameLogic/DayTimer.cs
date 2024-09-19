@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UniRx;
 
 public class DayTimer : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class DayTimer : MonoBehaviour
     private int _currentTime;
     private WaitForSeconds _wait;
 
+    public ReactiveProperty<int> _reactiveCurrentTime;
     public event Action<int> SecondSpent;
-    public event Action NightFallen;
 
     [field: SerializeField] public int StartTime { get; private set; } = 30;
 
@@ -18,6 +19,7 @@ public class DayTimer : MonoBehaviour
     {
         _wait = new(Delay);
         _currentTime = StartTime;
+        _reactiveCurrentTime = new(_currentTime);
         StartCoroutine(DayCoroutine());
     }
 
@@ -26,12 +28,10 @@ public class DayTimer : MonoBehaviour
         while (_currentTime > 0)
         {
             _currentTime--;
+            _reactiveCurrentTime.Value = _currentTime;
             SecondSpent?.Invoke(_currentTime);
 
             yield return _wait;
         }
-
-        if (_currentTime == 0)
-            NightFallen?.Invoke();
     }
 }

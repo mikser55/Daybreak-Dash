@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(MeshRenderer))]
 public class CircleFillController : MonoBehaviour
 {
     private const string FillAmount = "_FillAmount";
 
     [SerializeField] private Player _player;
 
-    private SpriteRenderer _spriteRenderer;
+    private Vector3 _fixedPosition = new(90, 0, 0);
+    private MeshRenderer _meshRenderer;
     private Material _circleMaterial;
 
     private void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _circleMaterial = _spriteRenderer.material;
+        _meshRenderer = GetComponent<MeshRenderer>();
+        _circleMaterial = _meshRenderer.material;
     }
 
     private void OnEnable()
@@ -29,6 +30,12 @@ public class CircleFillController : MonoBehaviour
     private void Start()
     {
         _circleMaterial.SetFloat(FillAmount, 0);
+    }
+
+    public void ExperienceCircleRotation()
+    {
+        Quaternion EulerCirclePosition = Quaternion.Euler(_fixedPosition);
+        transform.rotation = EulerCirclePosition;
     }
 
     private void UpdateCircle()

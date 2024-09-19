@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class TurretScanner : MonoBehaviour
 {
-    public event Action<Enemy> EnemyEntered;
-    public event Action<Enemy> EnemyExited;
+    public event Action<Health> EnemyEntered;
+    public event Action<Health> EnemyExited;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out Enemy enemy))
         {
-            EnemyEntered?.Invoke(enemy);
+            EnemyEntered?.Invoke(enemy.Health);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.TryGetComponent(out Enemy enemy))
-            EnemyExited?.Invoke(enemy);
+            EnemyExited?.Invoke(enemy.Health);
     }
 }

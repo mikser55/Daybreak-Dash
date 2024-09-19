@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float _maxSpawnDistance = 12f;
     [SerializeField] private float _spawnDelay = 3f;
 
+    private readonly List<Enemy> _unsubscribeEnemies = new();
     private List<Enemy> _enemies;
     private Coroutine _coroutine;
 
@@ -19,16 +22,10 @@ public class EnemySpawner : MonoBehaviour
     {
         _enemies = new(_maxEnemies);
         StartCoroutine(PrepareCoroutine());
-    }
 
-    private void OnEnable()
-    {
-        _timer.NightFallen += InitiateSpawning;
-    }
-
-    private void OnDisable()
-    {
-        _timer.NightFallen -= InitiateSpawning;
+        _timer._reactiveCurrentTime
+            .Where(time => time <= 0)
+            .Subscribe(_ => InitiateSpawning());
     }
 
     public void ReturnEnemy(Health health)
@@ -37,30 +34,18 @@ public class EnemySpawner : MonoBehaviour
         {
             _enemyPool.ReturnObject(enemy);
             _enemies.Remove(enemy);
-
-            health.EnemyDied -= InitiateSpawning;
-            health.ObjectDied -= ReturnEnemy;
         }
     }
 
     public void ReturnAllEnemies()
     {
         foreach (Enemy enemy in _enemies)
-        {
             _enemyPool.ReturnObject(enemy);
-
-            if (enemy.TryGetComponent(out Health health))
-            {
-                health.EnemyDied -= InitiateSpawning;
-                health.ObjectDied -= ReturnEnemy;
-            }
-        }
     }
 
     private void InitiateSpawning()
     {
-        if (_coroutine == null)
-            StartCoroutine(SpawnCoroutine());
+        _coroutine ??= StartCoroutine(SpawnCoroutine());
     }
 
     private void SpawnEnemy()
@@ -68,12 +53,6 @@ public class EnemySpawner : MonoBehaviour
         Enemy enemy = _enemyPool.GetObject();
         _enemies.Add(enemy);
         PositionEnemyAroundPlayer(enemy);
-
-        if (enemy.TryGetComponent(out Health health))
-        {
-            health.ObjectDied += ReturnEnemy;
-            health.EnemyDied += InitiateSpawning;
-        }
     }
 
     private void PositionEnemyAroundPlayer(Enemy enemy)
@@ -111,7 +90,26 @@ public class EnemySpawner : MonoBehaviour
             yield return null;
         }
 
+        foreach (Enemy enemy in _enemies)
+        {
+            enemy.Health.ObjectDied += ReturnEnemy;
+            enemy.Health.EnemyDied += InitiateSpawning;
+            _unsubscribeEnemies.Add(enemy);
+        }
+
         ReturnAllEnemies();
         _enemies.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        if (_unsubscribeEnemies.Count > 0)
+        {
+            foreach (Enemy enemy in _unsubscribeEnemies)
+            {
+                enemy.Health.ObjectDied -= ReturnEnemy;
+                enemy.Health.EnemyDied -= InitiateSpawning;
+            }
+        }
     }
 }

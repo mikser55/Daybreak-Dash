@@ -3,10 +3,21 @@
 public class BulletTurretFactory : TurretFactory
 {
     [SerializeField] private BulletTurret _prefab;
+    private bool _isInstantiated;
 
-    public override void CreateTurret()
+    private void Start()
     {
-        foreach (var spawnPoint in SpawnPoints)
-            Instantiate(_prefab, spawnPoint.position, Quaternion.LookRotation(Vector3.right));
+        CreateTurrets();
+    }
+
+    public override void CreateTurrets()
+    {
+        if (_isInstantiated == false)
+        {
+            foreach (var spawnPoint in SpawnPoints)
+                Instantiate(_prefab, spawnPoint.position, Quaternion.identity);
+
+            _isInstantiated = true;
+        }
     }
 }

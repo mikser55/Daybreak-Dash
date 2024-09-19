@@ -8,7 +8,7 @@ public class Scanner : MonoBehaviour
 
     [Tooltip("Scanner`s collider")]
     [SerializeField] private SphereCollider _collider;
-    [Tooltip("Radius of Scanner. Range from 0,1 to 0.2.")]
+    [Tooltip("Radius of Scanner. Range from 0.1 to 0.2")]
     [SerializeField] private float _radius;
 
     public event Action<ScrapMine> ResourceFound;

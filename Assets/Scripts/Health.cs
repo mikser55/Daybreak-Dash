@@ -7,7 +7,6 @@ public class Health : MonoBehaviour
 
     public event Action<Health> ObjectDied;
     public event Action EnemyDied;
-    public event Action<Enemy> EnemyComponentDied;
     public event Action Damaged;
 
     public float CurrentHealth { get; private set; }
@@ -43,8 +42,5 @@ public class Health : MonoBehaviour
     {
         ObjectDied?.Invoke(this);
         EnemyDied?.Invoke();
-
-        if (TryGetComponent(out Enemy enemy))
-            EnemyComponentDied(enemy);
     }
 }

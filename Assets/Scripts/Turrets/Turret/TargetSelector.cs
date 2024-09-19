@@ -12,26 +12,30 @@ public class TargetSelector
         _turretTransform = turretTransform;
     }
 
-    public event Action EnemySelected;
+    public event Action EnemyEntered;
 
-    public void AddEnemy(Enemy enemy)
+    public void AddEnemy(Health enemyHealth)
     {
-        if (!_enemies.Contains(enemy))
-            _enemies.Add(enemy);
+        enemyHealth.ObjectDied += RemoveEnemy;
 
-        if (enemy.TryGetComponent(out Health health))
-            health.EnemyComponentDied += RemoveEnemy;
+        if (enemyHealth.TryGetComponent(out Enemy enemy))
+        {
+            if (!_enemies.Contains(enemy))
+                _enemies.Add(enemy);
 
-        EnemySelected?.Invoke();
+            EnemyEntered?.Invoke();
+        }
     }
 
-    public void RemoveEnemy(Enemy enemy)
+    public void RemoveEnemy(Health enemyHealth)
     {
-        if (_enemies.Contains(enemy))
-            _enemies.Remove(enemy);
+        if (enemyHealth.TryGetComponent(out Enemy enemy))
+        {
+            if (_enemies.Contains(enemy))
+                _enemies.Remove(enemy);
 
-        if (enemy.TryGetComponent(out Health health))
-            health.EnemyComponentDied -= RemoveEnemy;
+            enemyHealth.ObjectDied += RemoveEnemy;
+        }
     }
 
     public Enemy GetNearestEnemy()
@@ -39,9 +43,10 @@ public class TargetSelector
         Enemy nearestEnemy = null;
         float nearestDistanceSqr = float.MaxValue;
 
-        foreach (var enemy in _enemies)
+        foreach (Enemy enemy in _enemies)
         {
-            if (enemy == null) continue;
+            if (enemy == null)
+                continue;
 
             float distanceSqr = (enemy.transform.position - _turretTransform.position).sqrMagnitude;
 

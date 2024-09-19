@@ -8,10 +8,11 @@ public class Pickaxe : MonoBehaviour
     private readonly float MinMineDelay = 1f;
     private readonly float MaxMineDelay = 2f;
 
+    [SerializeField] private PlayerAnimator _playerAnimator;
     [SerializeField] private Scanner _scanner;
     [SerializeField] private float _mineSpeed = 1f;
 
-    private readonly List<ScrapMine> _resources = new();
+    private readonly List<ScrapMine> _scrapMines = new();
     private readonly float _mineDamage = 1f;
     private Coroutine _mineCoroutine;
 
@@ -36,23 +37,24 @@ public class Pickaxe : MonoBehaviour
         }
     }
 
-    private void AddResource(ScrapMine resource)
+    private void AddResource(ScrapMine scrapMine)
     {
-        if (!_resources.Contains(resource))
+        if (!_scrapMines.Contains(scrapMine))
         {
-            _resources.Add(resource);
-            resource.Destroyed += DeleteResource;
+            _scrapMines.Add(scrapMine);
+            scrapMine.Destroyed += DeleteResource;
         }
 
         _mineCoroutine ??= StartCoroutine(MineResources());
+        _playerAnimator.UpdateExtracting(true);
     }
 
-    private void DeleteResource(ScrapMine resource)
+    private void DeleteResource(ScrapMine scrapMine)
     {
-        if (_resources.Contains(resource))
+        if (_scrapMines.Contains(scrapMine))
         {
-            _resources.Remove(resource);
-            resource.Destroyed -= DeleteResource;
+            _scrapMines.Remove(scrapMine);
+            scrapMine.Destroyed -= DeleteResource;
         }
     }
 
@@ -61,7 +63,7 @@ public class Pickaxe : MonoBehaviour
         float mineDelay = 1 / _mineSpeed;
         WaitForSeconds wait = new(mineDelay);
 
-        while (_resources.Count > 0)
+        while (_scrapMines.Count > 0)
         {
             ScrapMine nearestResource = FindNearestResource();
 
@@ -77,14 +79,15 @@ public class Pickaxe : MonoBehaviour
         }
 
         _mineCoroutine = null;
+        _playerAnimator.UpdateExtracting(false);
     }
 
     private ScrapMine FindNearestResource()
     {
         ScrapMine nearestResource;
 
-        if (_resources.Count > 0)
-            nearestResource = _resources.OrderBy(resource => (resource.transform.position - transform.position).magnitude).FirstOrDefault();
+        if (_scrapMines.Count > 0)
+            nearestResource = _scrapMines.OrderBy(resource => (resource.transform.position - transform.position).magnitude).FirstOrDefault();
         else
             nearestResource = null;
 

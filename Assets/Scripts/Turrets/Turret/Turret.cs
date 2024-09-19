@@ -20,14 +20,14 @@ public abstract class Turret : MonoBehaviour
     {
         _scanner.EnemyEntered += TargetSelector.AddEnemy;
         _scanner.EnemyExited += TargetSelector.RemoveEnemy;
-        TargetSelector.EnemySelected += Shoot;
+        TargetSelector.EnemyEntered += Shoot;
     }
 
     private void OnDisable()
     {
         _scanner.EnemyEntered -= TargetSelector.AddEnemy;
         _scanner.EnemyExited -= TargetSelector.RemoveEnemy;
-        TargetSelector.EnemySelected -= Shoot;
+        TargetSelector.EnemyEntered -= Shoot;
     }
 
     private void Start()
